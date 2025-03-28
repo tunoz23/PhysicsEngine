@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <entt.hpp>
 #include "headers/Shader.h"
 
 // Error callback

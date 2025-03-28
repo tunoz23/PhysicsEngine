@@ -17,6 +17,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/headers
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/glm-master
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/glad
+    ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/entt
 )
 
 target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC RESOURCE_PATH="${CMAKE_SOURCE_DIR}/Resources/")
