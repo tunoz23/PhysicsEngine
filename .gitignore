@@ -6,3 +6,4 @@ build/
 cmake-build-debug/
 CMakeSettings.json
 CMakeCache.txt
+.DS_Store
