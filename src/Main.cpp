@@ -5,6 +5,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "headers/Shader.h"
+
 // Error callback
 void error_callback(int error, const char* description) {
     std::cerr << "GLFW Error " << error << ": " << description << std::endl;
@@ -79,13 +81,37 @@ int main() {
     
     // Enable V-Sync
     glfwSwapInterval(1);
-    
+
+
+	Shader shader(RESOURCE_PATH "Shaders/DefaultVertex.glsl", RESOURCE_PATH "Shaders/DefaultFragment.glsl");
+
+    uint32_t vao,vbo;
+	float vertices[] = {
+		-0.5f, -0.5f, 0.0f,
+		 0.5f, -0.5f, 0.0f,
+		 0.0f,  0.5f, 0.0f
+	};
+
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+    glGenBuffers(1, &vbo);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+    glEnableVertexAttribArray(0);
+
     // Main loop
     while (!glfwWindowShouldClose(window)) {
         // Clear background
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
+		shader.use();
+		glBindVertexArray(vao);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
         // Drawing code will go here
         
         // Swap buffers and process events
