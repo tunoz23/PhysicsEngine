@@ -7,6 +7,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <array>
 #include <cstddef>
 #include "glm/glm.hpp"
 #include "glm/ext/scalar_constants.hpp"
@@ -36,9 +37,9 @@ std::vector<float> generateCircleVertices(int  N) {
         vertices.push_back(eachVertex[2]);
 
 
-        for (auto s: vertices)
-            std::cout << s << " ";
-        std::cout << std::endl;
+        //for (auto s: vertices)
+        //    std::cout << s << " ";
+        //std::cout << std::endl;
         //std::cout <<" angle: "<<  std::cos(angle)<< " "<<std::sin(angle) << std::endl;
         //std::cout <<" angle: "<<angle /( 2 * PI) <<  glm::cos(angle)<< " "<<glm::sin(angle) << std::endl;
     }
