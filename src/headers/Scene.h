@@ -12,13 +12,14 @@
 
 class Scene {
 public:
+    entt::dispatcher dispatcher;
 
-    RenderSystem renderSys;
-
+    RenderSystem renderSystem;
+    PhysicsSystem physicsSystem;
     Scene(Shader shader);
     ~Scene() = default;
 
-    void main(float dt);
+    void main(double dt);
 private:
     entt::registry m_Registry;
 };

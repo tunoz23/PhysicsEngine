@@ -11,7 +11,7 @@
 class RenderSystem {
 
     Shader m_Shader;
-
+    float aspectRatio = 16.f/9.f;
 
 public:
     RenderSystem(Shader shader);
@@ -19,5 +19,8 @@ public:
 
     void render(const MeshComponent& meshComponent) const;
     void render(entt::registry& registry) const;
+
+    
     static void initializeMesh(entt::registry& registry);
+
 };

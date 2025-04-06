@@ -7,6 +7,9 @@
 
 class WindowSystem {
 public:
+
+ 
+	public:
     WindowSystem(int width, int height, const char* title);
     ~WindowSystem();
 
@@ -15,13 +18,13 @@ public:
     void pollEvents();
     GLFWwindow* getWindow() const;
 
+
 private:
     GLFWwindow* m_Window;
 
     static void errorCallback(int error, const char* description);
     static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
     static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-
-    bool initGLFW();
+    static bool initGLFW();
     bool createWindow(int width, int height, const char* title);
 };

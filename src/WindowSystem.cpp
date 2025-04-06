@@ -5,7 +5,8 @@
 #include "WindowSystem.h"
 #include <iostream>
 
-WindowSystem::WindowSystem(int width, int height, const char* title) {
+WindowSystem::WindowSystem(int width, int height, const char* title)
+{
     if (!initGLFW() || !createWindow(width, height, title)) {
         // Handle failure (throw exception or set a flag)
     }
@@ -37,6 +38,12 @@ bool WindowSystem::initGLFW() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 #endif
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+#ifdef _WIN32
+    // Windows'ta pencere taşınırken bile render işlemi devam eder
+    glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
+#endif
+
     return true;
 }
 bool WindowSystem::createWindow(int width, int height, const char* title) {
@@ -60,7 +67,6 @@ bool WindowSystem::createWindow(int width, int height, const char* title) {
     // Set callbacks
     glfwSetFramebufferSizeCallback(m_Window, framebufferSizeCallback);
     glfwSetKeyCallback(m_Window, keyCallback);
-
     // Enable V-Sync
     glfwSwapInterval(1);
 
@@ -91,6 +97,7 @@ void WindowSystem::errorCallback(int error, const char* description) {
 
 void WindowSystem::framebufferSizeCallback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
+	
 }
 
 void WindowSystem::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -98,3 +105,6 @@ void WindowSystem::keyCallback(GLFWwindow* window, int key, int scancode, int ac
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
 }
+
+
+// Ana programda

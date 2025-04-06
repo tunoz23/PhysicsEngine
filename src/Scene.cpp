@@ -6,77 +6,27 @@
 #include "PhysicsComponent.h"
 #include "PhysicsSystem.h"
 #include "TransformComponent.h"
-#include "utils.h"
+#include "CircleColliderComponent.h"
+#include "Circle.h"
+#include "CollisionSystem.h"
+
+
 Scene::Scene(Shader shader)
-    :renderSys(RenderSystem(shader))
+    :renderSystem(RenderSystem(shader)), physicsSystem(PhysicsSystem( m_Registry ))
 {
-
-    entt::entity e = m_Registry.create();
-
-
-
-    m_Registry.emplace<MeshComponent>(e,std::vector<float> {
-        -0.5f, -0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f,
-         0.0f,  0.5f, 0.0f
-    },
-    std::vector<unsigned int> {0, 1, 2});
-
-
-
-    m_Registry.emplace<TransformComponent>(e,TransformComponent
-        {glm::vec3(-10.f,0.0f,0.f),
-            glm::vec3(0,0,90.f),
-            glm::vec3(10.f)});
-
-
-    m_Registry.emplace<PhysicsComponent>(e,PhysicsComponent{
-        glm::vec3{0,30,0},
-        glm::vec3{0,0,0},
-        glm::vec3{0},
-        10
-    });
-
-
-
-    entt::entity e1 = m_Registry.create();
-
-
-
-    m_Registry.emplace<MeshComponent>(e1,std::vector<float> {
-        -0.5f, -0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f,
-         0.0f,  0.5f, 0.0f
-    },
-    std::vector<unsigned int> {0, 1, 2});
-
-
-
-    m_Registry.emplace<TransformComponent>(e1,TransformComponent
-        {glm::vec3(0.f,0.0f,0.f),
-            glm::vec3(0,0,0.f),
-            glm::vec3(1.f)});
-
-
-    m_Registry.emplace<PhysicsComponent>(e1,PhysicsComponent{
-        glm::vec3{0,0,0},
-        glm::vec3{0,0,0},
-        glm::vec3{0},
-        0
-    });
-
-
+	physicsSystem.subscribe(dispatcher);
     entt::entity circleEntity = m_Registry.create();
+    entt::entity circleEntity2 = m_Registry.create();
 
-    int N = 128;
+    int N = 16;
     m_Registry.emplace<MeshComponent>(circleEntity, generateCircleVertices(N), generateCircleIndices(N));
-
+    m_Registry.emplace<MeshComponent>(circleEntity2, generateCircleVertices(N), generateCircleIndices(N));
 
 
 
     m_Registry.emplace<TransformComponent>(circleEntity,TransformComponent
         {glm::vec3(-20.f,0.0f,0.f),
-            glm::vec3(0,0,90.f),
+            glm::vec3(0,0,0),
             glm::vec3(1.f)});
 
 
@@ -84,8 +34,27 @@ Scene::Scene(Shader shader)
         glm::vec3{10,20,0},
         glm::vec3{0,0,0},
         glm::vec3{0},
-        50
+        0
     });
+	m_Registry.emplace<CircleColliderComponent>(circleEntity,1.0f);
+
+    //------------------------------------------------------------------//
+
+    m_Registry.emplace<TransformComponent>(circleEntity2, TransformComponent
+        { glm::vec3(20.f,0.0f,0.f),
+            glm::vec3(0,0,0),
+            glm::vec3(1.f) });
+
+
+    m_Registry.emplace<PhysicsComponent>(circleEntity2, PhysicsComponent{
+        glm::vec3{-10,20,0},
+        glm::vec3{0,0,0},
+        glm::vec3{0},
+        0
+        });
+    m_Registry.emplace<CircleColliderComponent>(circleEntity2, 1.0f);
+
+
 
 
 
@@ -93,11 +62,13 @@ Scene::Scene(Shader shader)
     RenderSystem::initializeMesh(m_Registry);
 }
 
-void Scene::main(float dt)
+void Scene::main(double dt)
 {
+    CollisionSystem::solveCollisions(m_Registry,dispatcher);
+    dispatcher.update();
 
-    PhysicsSystem::update(m_Registry,dt);
-    renderSys.render(m_Registry);
+    physicsSystem.update(m_Registry,static_cast<float>(dt));
+    renderSystem.render(m_Registry);
 
 
 }

@@ -23,9 +23,12 @@ add_executable(${CMAKE_PROJECT_NAME}
         src/PhysicsSystem.cpp
         src/headers/PhysicsSystem.h
         src/headers/PhysicsComponent.h
-        src/headers/utils.h
-        src/utils.cpp
-)
+        src/headers/Circle.h
+        src/Shapes/Circle.cpp
+        src/CollisionSystem.cpp
+        src/headers/CollisionSystem.h
+        src/headers/CircleColliderComponent.h
+        src/headers/CollisionEvent.h)
 
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC 
     ${CMAKE_CURRENT_SOURCE_DIR}/include

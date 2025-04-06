@@ -27,13 +27,13 @@ void RenderSystem::render(entt::registry &registry) const {
 
     //DEBUG PURPOSES
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-    glm::mat4 projection = glm::ortho(-50.0f, 50.0f, -50.0f, 50.0f, -1.0f, 1.0f);
+	float aspectRatio = 16.0f / 9.0f;
+    glm::mat4 projection = glm::ortho(-50.0f * aspectRatio, 50.0f * aspectRatio, -50.0f, 50.0f, -1.0f, 1.0f);
     m_Shader.setMat4("projection", projection);
 
     // Iterate over entities that have both TransformComponent and MeshComponent
     auto view = registry.view<TransformComponent, MeshComponent>();
-    for (auto entity : view) {
+    for (const auto entity : view) {
         auto& transformComponent = view.get<TransformComponent>(entity);
         auto& meshComponent = view.get<MeshComponent>(entity);
 

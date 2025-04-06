@@ -9,7 +9,8 @@ struct PhysicsComponent {
     glm::vec3 velocity;
     glm::vec3 acceleration;
     glm::vec3 force;
-    float mass;
+    float restitution;     // 0 = inelastic, 1 = perfectly elastic
+	float mass;
 
     PhysicsComponent(glm::vec3 velocity, glm::vec3 acceleration, glm::vec3 force, float mass)
         :velocity(velocity), acceleration(acceleration), force(force), mass(mass) {}
