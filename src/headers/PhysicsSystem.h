@@ -7,7 +7,7 @@
 
 #include "glm/vec3.hpp"
 #include <CollisionEvent.h>
-
+#include "WallCollisionEvent.h"
 
 class PhysicsSystem
 {
@@ -16,9 +16,10 @@ class PhysicsSystem
 public:
     PhysicsSystem(entt::registry& reg, entt::dispatcher& dispatcher);
 
-     void update(float dt);
-     void onCollision(CollisionEvent& event);
-     void subscribe(entt::dispatcher& dispatcher);
+    void update(float dt);
+    void onCollision(CollisionEvent& event);
+    void onWallCollision(WallCollisionEvent& event);
+    void subscribe(entt::dispatcher& dispatcher);
 
 private:
     entt::registry& m_Registry;

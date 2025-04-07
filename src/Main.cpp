@@ -6,7 +6,7 @@
 
 int main() {
     WindowSystem windowSystem(1024, 576, "PhysicsEngine");
-
+    //RenderSystem::aspectRatio = WindowSystem::aspectRatio;
     Shader shader(RESOURCE_PATH "Shaders/DefaultVertex.glsl", RESOURCE_PATH "Shaders/DefaultFragment.glsl");
 
 

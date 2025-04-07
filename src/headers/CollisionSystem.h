@@ -18,6 +18,8 @@ public:
 		const TransformComponent& transformA,     const TransformComponent& transformB);
 
 	void CheckCollisions();
+	void CheckWallCollisions();
+
 
 private:
 	entt::registry& m_Registry;

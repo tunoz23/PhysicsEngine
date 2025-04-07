@@ -10,9 +10,16 @@
 
 class RenderSystem {
 
-    float aspectRatio = 16.f/9.f;
 
 public:
+    static float windowLeft;
+    static float windowRight;
+    static float windowBottom;
+    static float windowTop;
+    static float aspectRatio;
+
+public:
+
     RenderSystem(Shader shader, entt::registry& registry);
     ~RenderSystem() = default;
 

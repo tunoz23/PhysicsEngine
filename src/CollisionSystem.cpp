@@ -2,7 +2,9 @@
 #include "CollisionSystem.h"
 
 #include "CollisionEvent.h"
+#include "RenderSystem.h"
 #include "TransformComponent.h"
+#include "WallCollisionEvent.h"
 #include "glm/geometric.hpp"
 
 CollisionSystem::CollisionSystem(entt::registry& registry, entt::dispatcher& dispatcher)
@@ -43,4 +45,37 @@ void CollisionSystem::CheckCollisions()
 			}
 		}
 	}
+}
+void CollisionSystem::CheckWallCollisions() {
+	float aspectRatio = RenderSystem::aspectRatio;
+
+	float windowLeft =  RenderSystem::windowLeft* aspectRatio;
+	float windowRight = RenderSystem::windowRight* aspectRatio;
+	float windowBottom = RenderSystem::windowBottom;
+	float windowTop =RenderSystem::windowTop;
+
+
+	std::cout << "inside wall collsiion\n";
+	auto view = m_Registry.view<CircleColliderComponent, TransformComponent>();
+	for (auto entity : view) {
+		auto& collider = view.get<CircleColliderComponent>(entity);
+		auto& transform = view.get<TransformComponent>(entity);
+
+
+		// Left & right
+		if (transform.position.x - collider.radius < windowLeft)
+			m_Dispatcher.trigger<WallCollisionEvent>({entity,WALL::LEFT});
+
+		else if (transform.position.x + collider.radius > windowRight)
+			m_Dispatcher.trigger<WallCollisionEvent>({entity,WALL::RIGHT});
+
+		// Top & bottom
+		else if (transform.position.y - collider.radius < windowBottom)
+			m_Dispatcher.trigger<WallCollisionEvent>({entity,WALL::BOTTOM});
+
+		else if (transform.position.y + collider.radius < windowTop)
+			m_Dispatcher.trigger<WallCollisionEvent>({entity,WALL::TOP});
+
+	}
+
 }

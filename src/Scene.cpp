@@ -34,7 +34,7 @@ Scene::Scene(Shader shader)
         glm::vec3{10,20,0},
         glm::vec3{0,0,0},
         glm::vec3{0},
-        0
+        1,20
     });
 	m_Registry.emplace<CircleColliderComponent>(circleEntity,1.0f);
 
@@ -48,9 +48,9 @@ Scene::Scene(Shader shader)
 
     m_Registry.emplace<PhysicsComponent>(circleEntity2, PhysicsComponent{
         glm::vec3{-10,20,0},
-        glm::vec3{0,0,0},
+        glm::vec3{0,0.7,0},
         glm::vec3{0},
-        0
+        1,10
         });
     m_Registry.emplace<CircleColliderComponent>(circleEntity2, 1.0f);
 
@@ -64,7 +64,10 @@ Scene::Scene(Shader shader)
 
 void Scene::main(double dt)
 {
-    collisionSystem.CheckCollisions();
+
+    //TO DO: these two have some problems.
+    //collisionSystem.CheckWallCollisions();
+    //collisionSystem.CheckCollisions();
     m_Dispatcher.update();
 
     physicsSystem.update(static_cast<float>(dt));

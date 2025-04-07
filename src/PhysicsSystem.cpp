@@ -4,8 +4,11 @@
 
 #include "PhysicsSystem.h"
 
+#include "CircleColliderComponent.h"
 #include "PhysicsComponent.h"
+#include "RenderSystem.h"
 #include "TransformComponent.h"
+
 
 PhysicsSystem::PhysicsSystem(entt::registry& reg, entt::dispatcher& dispatcher)
 	:m_Registry(reg), m_Dispatcher(dispatcher)
@@ -21,16 +24,6 @@ void PhysicsSystem::update(float dt)
     {
         auto& physicsComponent = view.get<PhysicsComponent>(entity);
         auto& transformComponent = view.get<TransformComponent>(entity);
-
-		float aspectRatio = 16.0f / 9.0f;
-        if (transformComponent.position.x < -50.0f * aspectRatio || transformComponent.position.x > 50.0f * aspectRatio)
-		{
-			physicsComponent.velocity.x = -physicsComponent.velocity.x;
-		}
-        if (transformComponent.position.y < -50.0f || transformComponent.position.y > 50.0f)
-        {
-			physicsComponent.velocity.y = -physicsComponent.velocity.y;
-        }
 
 
         if (physicsComponent.mass != 0.0f)
@@ -72,9 +65,48 @@ void PhysicsSystem::onCollision(CollisionEvent& event)
 
 }
 
+void PhysicsSystem::onWallCollision(WallCollisionEvent& event)
+{
+    float aspectRatio = RenderSystem::aspectRatio;
+
+    float windowLeft = RenderSystem::windowLeft * aspectRatio;
+    float windowRight = RenderSystem::windowRight * aspectRatio;
+    float windowBottom = RenderSystem::windowBottom;
+    float windowTop = RenderSystem::windowTop;
+
+   // auto [tc,pc,ccc]
+    //= m_Registry.get<TransformComponent,PhysicsComponent,CircleColliderComponent>(event.entity);
+    std::cout << "Has collidied" << (int)event.entity << "\n";
+    auto& tc = m_Registry.get<TransformComponent>(event.entity);
+    auto& pc = m_Registry.get<PhysicsComponent>(event.entity);
+    auto& ccc = m_Registry.get<CircleColliderComponent>(event.entity);
+    switch (event.wall)
+    {
+        case WALL::LEFT:
+            tc.position.x = windowLeft + ccc.radius;
+            pc.velocity.x *= -pc.restitution;
+            break;
+        case WALL::RIGHT:
+            tc.position.x = windowRight - ccc.radius;
+            pc.velocity.x *= -pc.restitution;
+            break;
+        case WALL::BOTTOM:
+            tc.position.y = windowBottom + ccc.radius;
+            pc.velocity.y *= -pc.restitution;
+            break;
+        case WALL::TOP:
+            tc.position.y = windowTop - ccc.radius;
+            pc.velocity.y *= -pc.restitution;
+            break;
+        default:
+            break;
+    }
+}
+
 void PhysicsSystem::subscribe(entt::dispatcher& dispatcher)
 {
     dispatcher.sink<CollisionEvent>().connect<&PhysicsSystem::onCollision>(this);
+    dispatcher.sink<WallCollisionEvent>().connect<&PhysicsSystem::onWallCollision>(this);
 
 }
 

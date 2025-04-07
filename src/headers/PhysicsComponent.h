@@ -12,11 +12,11 @@ struct PhysicsComponent {
     float restitution;     // 0 = inelastic, 1 = perfectly elastic
 	float mass;
 
-    PhysicsComponent(glm::vec3 velocity, glm::vec3 acceleration, glm::vec3 force, float mass)
-        :velocity(velocity), acceleration(acceleration), force(force), mass(mass) {}
+    PhysicsComponent(glm::vec3 velocity, glm::vec3 acceleration, glm::vec3 force, float restitution,float mass)
+        :velocity(velocity), acceleration(acceleration), force(force), restitution(restitution),mass(mass) {}
 
     PhysicsComponent(PhysicsComponent const& other)
-        :velocity(other.velocity), acceleration(other.acceleration),force(other.force), mass(other.mass) {}
+        :velocity(other.velocity), acceleration(other.acceleration),force(other.force), restitution(other.restitution),mass(other.mass) {}
 
 
 

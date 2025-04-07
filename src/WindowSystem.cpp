@@ -13,6 +13,7 @@ WindowSystem::WindowSystem(int width, int height, const char* title)
     else {
         std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
         std::cout << "GPU: " << glGetString(GL_RENDERER) << std::endl;
+
     }
 }
 
@@ -97,6 +98,8 @@ void WindowSystem::errorCallback(int error, const char* description) {
 
 void WindowSystem::framebufferSizeCallback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
+    aspectRatio = width / static_cast<float>(height);
+
 	
 }
 
@@ -106,5 +109,5 @@ void WindowSystem::keyCallback(GLFWwindow* window, int key, int scancode, int ac
     }
 }
 
-
+float WindowSystem::aspectRatio = 16.f/9.f;
 // Ana programda

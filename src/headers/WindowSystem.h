@@ -7,9 +7,8 @@
 
 class WindowSystem {
 public:
-
+    static float aspectRatio;
  
-	public:
     WindowSystem(int width, int height, const char* title);
     ~WindowSystem();
 
