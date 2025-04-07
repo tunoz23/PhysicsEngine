@@ -11,17 +11,18 @@
 
 class PhysicsSystem
 {
-private:
-    entt::registry& m_Registry;
 
     static constexpr glm::vec3 GravityAcceleration{0,-9.81f,0};
 public:
-    PhysicsSystem(entt::registry& reg);
+    PhysicsSystem(entt::registry& reg, entt::dispatcher& dispatcher);
 
-     void update(entt::registry& registry,float dt);
+     void update(float dt);
      void onCollision(CollisionEvent& event);
      void subscribe(entt::dispatcher& dispatcher);
-	
+
+private:
+    entt::registry& m_Registry;
+    entt::dispatcher& m_Dispatcher;
 };
 
 

@@ -7,15 +7,15 @@
 #include "PhysicsComponent.h"
 #include "TransformComponent.h"
 
-PhysicsSystem::PhysicsSystem(entt::registry& reg)
-	:m_Registry(reg)
+PhysicsSystem::PhysicsSystem(entt::registry& reg, entt::dispatcher& dispatcher)
+	:m_Registry(reg), m_Dispatcher(dispatcher)
 {
-
+    //subscribe(m_Dispatcher);
 }
 
-void PhysicsSystem::update(entt::registry& registry,float dt)
+void PhysicsSystem::update(float dt)
 {
-    auto view = registry.view<PhysicsComponent, TransformComponent>();
+    auto view = m_Registry.view<PhysicsComponent, TransformComponent>();
 
     for (auto entity : view)
     {

@@ -7,8 +7,8 @@
 #include "Scene.h"
 #include "TransformComponent.h"
 
-RenderSystem::RenderSystem(Shader shader)
-    :m_Shader(shader)
+RenderSystem::RenderSystem(Shader shader, entt::registry& registry)
+	:m_Shader(shader), m_Registry(registry) 
 {
 
 }
@@ -22,7 +22,7 @@ void RenderSystem::render(const MeshComponent& meshComponent) const {
 
 }
 
-void RenderSystem::render(entt::registry &registry) const {
+void RenderSystem::render() const {
     m_Shader.use();
 
     //DEBUG PURPOSES
@@ -32,7 +32,7 @@ void RenderSystem::render(entt::registry &registry) const {
     m_Shader.setMat4("projection", projection);
 
     // Iterate over entities that have both TransformComponent and MeshComponent
-    auto view = registry.view<TransformComponent, MeshComponent>();
+    auto view = m_Registry.view<TransformComponent, MeshComponent>();
     for (const auto entity : view) {
         auto& transformComponent = view.get<TransformComponent>(entity);
         auto& meshComponent = view.get<MeshComponent>(entity);

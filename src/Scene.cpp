@@ -8,13 +8,13 @@
 #include "TransformComponent.h"
 #include "CircleColliderComponent.h"
 #include "Circle.h"
-#include "CollisionSystem.h"
 
 
 Scene::Scene(Shader shader)
-    :renderSystem(RenderSystem(shader)), physicsSystem(PhysicsSystem( m_Registry ))
+	:renderSystem(RenderSystem(shader, m_Registry)), physicsSystem(PhysicsSystem(m_Registry, m_Dispatcher)), collisionSystem(CollisionSystem(m_Registry, m_Dispatcher))
 {
-	physicsSystem.subscribe(dispatcher);
+
+	physicsSystem.subscribe(m_Dispatcher);
     entt::entity circleEntity = m_Registry.create();
     entt::entity circleEntity2 = m_Registry.create();
 
@@ -64,11 +64,11 @@ Scene::Scene(Shader shader)
 
 void Scene::main(double dt)
 {
-    CollisionSystem::solveCollisions(m_Registry,dispatcher);
-    dispatcher.update();
+    collisionSystem.CheckCollisions();
+    m_Dispatcher.update();
 
-    physicsSystem.update(m_Registry,static_cast<float>(dt));
-    renderSystem.render(m_Registry);
+    physicsSystem.update(static_cast<float>(dt));
+    renderSystem.render();
 
 
 }

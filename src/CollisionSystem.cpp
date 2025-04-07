@@ -5,8 +5,14 @@
 #include "TransformComponent.h"
 #include "glm/geometric.hpp"
 
+CollisionSystem::CollisionSystem(entt::registry& registry, entt::dispatcher& dispatcher)
+	: m_Registry(registry), m_Dispatcher(dispatcher)
+{
+	
+}
+
 bool CollisionSystem::checkCollision(const CircleColliderComponent& colliderA, const CircleColliderComponent& colliderB,
-	const TransformComponent& transformA, const TransformComponent& transformB)
+                                     const TransformComponent& transformA, const TransformComponent& transformB)
 {
 	// Calculate the distance between the centers of the two colliders
 	float distance = glm::length(transformA.position - transformB.position);
@@ -14,9 +20,9 @@ bool CollisionSystem::checkCollision(const CircleColliderComponent& colliderA, c
 	return distance < (colliderA.radius + colliderB.radius);
 }
 
-void CollisionSystem::solveCollisions(entt::registry& registry, entt::dispatcher& dispatcher)
+void CollisionSystem::CheckCollisions()
 {
-	auto view = registry.view<CircleColliderComponent, TransformComponent>();
+	auto view = m_Registry.view<CircleColliderComponent, TransformComponent>();
 	for (auto entityA : view)
 	{
 		auto& colliderA = view.get<CircleColliderComponent>(entityA);
@@ -32,9 +38,8 @@ void CollisionSystem::solveCollisions(entt::registry& registry, entt::dispatcher
 				glm::vec3 collisionNormal = glm::normalize(transformB.position - transformA.position);
 				float overlap = (colliderA.radius + colliderB.radius) - glm::length(transformA.position - transformB.position);
 
-				dispatcher.trigger<CollisionEvent>({entityA, entityB, overlap, collisionNormal});
-				//transformA.position -= collisionNormal * (overlap / 2.0f);
-				//transformB.position += collisionNormal * (overlap / 2.0f);
+				m_Dispatcher.trigger<CollisionEvent>({entityA, entityB, overlap, collisionNormal});
+				;
 			}
 		}
 	}

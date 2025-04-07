@@ -10,17 +10,19 @@
 
 class RenderSystem {
 
-    Shader m_Shader;
     float aspectRatio = 16.f/9.f;
 
 public:
-    RenderSystem(Shader shader);
+    RenderSystem(Shader shader, entt::registry& registry);
     ~RenderSystem() = default;
 
     void render(const MeshComponent& meshComponent) const;
-    void render(entt::registry& registry) const;
+    void render() const;
 
     
     static void initializeMesh(entt::registry& registry);
+private:
+    Shader m_Shader;
+	entt::registry& m_Registry;
 
 };
