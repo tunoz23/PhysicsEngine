@@ -79,7 +79,7 @@ void RenderSystem::initializeMesh(entt::registry& registry) {
 }
 
 float RenderSystem::aspectRatio = 16.f/9.0f;
-float RenderSystem::windowLeft = -50.f;
-float RenderSystem::windowRight = 50.f;
-float RenderSystem::windowBottom = -50.f;
-float RenderSystem::windowTop= 50.f;
+float RenderSystem::windowLeft = -25.f;
+float RenderSystem::windowRight = 25.f;
+float RenderSystem::windowBottom = -25.f;
+float RenderSystem::windowTop= 25.f;

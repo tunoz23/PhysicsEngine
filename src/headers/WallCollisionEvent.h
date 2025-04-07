@@ -15,4 +15,6 @@ enum class WALL {
 struct WallCollisionEvent {
     entt::entity entity;
     WALL wall;
+
+	WallCollisionEvent(entt::entity entity, WALL wall) : entity(entity), wall(wall) {}
 };

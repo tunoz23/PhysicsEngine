@@ -18,7 +18,7 @@ Scene::Scene(Shader shader)
     entt::entity circleEntity = m_Registry.create();
     entt::entity circleEntity2 = m_Registry.create();
 
-    int N = 16;
+    int N = 8;
     m_Registry.emplace<MeshComponent>(circleEntity, generateCircleVertices(N), generateCircleIndices(N));
     m_Registry.emplace<MeshComponent>(circleEntity2, generateCircleVertices(N), generateCircleIndices(N));
 
@@ -34,7 +34,7 @@ Scene::Scene(Shader shader)
         glm::vec3{10,20,0},
         glm::vec3{0,0,0},
         glm::vec3{0},
-        1,20
+        0.9,1
     });
 	m_Registry.emplace<CircleColliderComponent>(circleEntity,1.0f);
 
@@ -47,14 +47,33 @@ Scene::Scene(Shader shader)
 
 
     m_Registry.emplace<PhysicsComponent>(circleEntity2, PhysicsComponent{
-        glm::vec3{-10,20,0},
-        glm::vec3{0,0.7,0},
+        glm::vec3{-9999999,100,0},
+        glm::vec3{0,0,0},
         glm::vec3{0},
-        1,10
+        0.9,100
         });
     m_Registry.emplace<CircleColliderComponent>(circleEntity2, 1.0f);
 
 
+    for (int i = 0; i<10; i++)
+    {
+        entt::entity ent = m_Registry.create();
+        m_Registry.emplace<MeshComponent>(ent, generateCircleVertices(N), generateCircleIndices(N));
+
+        m_Registry.emplace<TransformComponent>(ent, TransformComponent
+            { glm::vec3(i*5,0.0f,0.f),
+                glm::vec3(0,0,0),
+                glm::vec3(1.f) });
+
+
+        m_Registry.emplace<PhysicsComponent>(ent, PhysicsComponent{
+            glm::vec3{-999,100,0},
+            glm::vec3{0,0,0},
+            glm::vec3{0},
+            0.9,100
+            });
+        m_Registry.emplace<CircleColliderComponent>(ent, 1.0f);
+    }
 
 
 
@@ -66,8 +85,9 @@ void Scene::main(double dt)
 {
 
     //TO DO: these two have some problems.
-    //collisionSystem.CheckWallCollisions();
-    //collisionSystem.CheckCollisions();
+    collisionSystem.CheckCollisions();
+    collisionSystem.CheckWallCollisions();
+
     m_Dispatcher.update();
 
     physicsSystem.update(static_cast<float>(dt));

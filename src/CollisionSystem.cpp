@@ -49,13 +49,13 @@ void CollisionSystem::CheckCollisions()
 void CollisionSystem::CheckWallCollisions() {
 	float aspectRatio = RenderSystem::aspectRatio;
 
-	float windowLeft =  RenderSystem::windowLeft* aspectRatio;
-	float windowRight = RenderSystem::windowRight* aspectRatio;
+	float windowLeft =  RenderSystem::windowLeft * aspectRatio;
+	float windowRight = RenderSystem::windowRight * aspectRatio;
 	float windowBottom = RenderSystem::windowBottom;
 	float windowTop =RenderSystem::windowTop;
 
 
-	std::cout << "inside wall collsiion\n";
+	
 	auto view = m_Registry.view<CircleColliderComponent, TransformComponent>();
 	for (auto entity : view) {
 		auto& collider = view.get<CircleColliderComponent>(entity);
@@ -73,7 +73,7 @@ void CollisionSystem::CheckWallCollisions() {
 		else if (transform.position.y - collider.radius < windowBottom)
 			m_Dispatcher.trigger<WallCollisionEvent>({entity,WALL::BOTTOM});
 
-		else if (transform.position.y + collider.radius < windowTop)
+		else if (transform.position.y + collider.radius > windowTop)
 			m_Dispatcher.trigger<WallCollisionEvent>({entity,WALL::TOP});
 
 	}

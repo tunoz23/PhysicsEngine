@@ -24,7 +24,7 @@ int main() {
        currentFrameTime = glfwGetTime();
        dt = currentFrameTime - lastFrameTime;
        lastFrameTime = currentFrameTime;
-
+       std::cout << 1.0 / dt << "\n";
 
         windowSystem.pollEvents();
 

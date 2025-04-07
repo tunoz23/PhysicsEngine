@@ -69,7 +69,7 @@ bool WindowSystem::createWindow(int width, int height, const char* title) {
     glfwSetFramebufferSizeCallback(m_Window, framebufferSizeCallback);
     glfwSetKeyCallback(m_Window, keyCallback);
     // Enable V-Sync
-    glfwSwapInterval(1);
+    glfwSwapInterval(0);
 
     return true;
 }
