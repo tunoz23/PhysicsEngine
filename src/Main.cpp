@@ -1,30 +1,29 @@
-#include "WindowSystem.h"
 #include "Scene.h"
+#include "WindowSystem.h"
 #include "headers/Shader.h"
 
-
-
-int main() {
+int main()
+{
     WindowSystem windowSystem(1024, 576, "PhysicsEngine");
-    //RenderSystem::aspectRatio = WindowSystem::aspectRatio;
-    Shader shader(RESOURCE_PATH "Shaders/DefaultVertex.glsl", RESOURCE_PATH "Shaders/DefaultFragment.glsl");
-
+    // RenderSystem::aspectRatio = WindowSystem::aspectRatio;
+    Shader shader(RESOURCE_PATH "Shaders/DefaultVertex.glsl",
+                  RESOURCE_PATH "Shaders/DefaultFragment.glsl");
 
     Scene scene(shader);
-    constexpr float color = 44/255.0f;
+
+    constexpr float color = 44 / 255.0f;
 
     double lastFrameTime = glfwGetTime();
     double currentFrameTime = 0.0f;
     double dt = 0.0f;
 
+    while (!windowSystem.shouldClose())
+    {
 
-   while (!windowSystem.shouldClose())
-   {
+        currentFrameTime = glfwGetTime();
+        dt = currentFrameTime - lastFrameTime;
+        lastFrameTime = currentFrameTime;
 
-       currentFrameTime = glfwGetTime();
-       dt = currentFrameTime - lastFrameTime;
-       lastFrameTime = currentFrameTime;
-       std::cout << 1.0 / dt << "\n";
 
         windowSystem.pollEvents();
 
@@ -35,6 +34,6 @@ int main() {
 
         windowSystem.swapBuffers();
     }
-    
+
     return 0;
 }

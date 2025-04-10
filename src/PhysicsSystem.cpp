@@ -9,11 +9,10 @@
 #include "RenderSystem.h"
 #include "TransformComponent.h"
 
-
-PhysicsSystem::PhysicsSystem(entt::registry& reg, entt::dispatcher& dispatcher)
-	:m_Registry(reg), m_Dispatcher(dispatcher)
+PhysicsSystem::PhysicsSystem(entt::registry &reg, entt::dispatcher &dispatcher)
+    : m_Registry(reg), m_Dispatcher(dispatcher)
 {
-    //subscribe(m_Dispatcher);
+    // subscribe(m_Dispatcher);
 }
 
 void PhysicsSystem::update(float dt)
@@ -22,31 +21,26 @@ void PhysicsSystem::update(float dt)
 
     for (auto entity : view)
     {
-        auto& physicsComponent = view.get<PhysicsComponent>(entity);
-        auto& transformComponent = view.get<TransformComponent>(entity);
-
+        auto &physicsComponent = view.get<PhysicsComponent>(entity);
+        auto &transformComponent = view.get<TransformComponent>(entity);
 
         if (physicsComponent.mass != 0.0f)
-            physicsComponent.velocity += (physicsComponent.acceleration + PhysicsSystem::GravityAcceleration )* dt;
+            physicsComponent.velocity +=
+                (physicsComponent.acceleration + PhysicsSystem::GravityAcceleration) * dt;
 
         else
-            physicsComponent.velocity += physicsComponent.acceleration  * dt;
+            physicsComponent.velocity += physicsComponent.acceleration * dt;
 
-        
         transformComponent.position += physicsComponent.velocity * dt;
-
-
     }
-
 }
 
-void PhysicsSystem::onCollision(CollisionEvent& event)
+void PhysicsSystem::onCollision(CollisionEvent &event)
 {
+    // TO DO: IT DOESNT WORKKKKKKKKKK
 
-    //TO DO: IT DOESNT WORKKKKKKKKKK
-
-    auto& physicsA =  m_Registry.get<PhysicsComponent>(event.entityA);
-    auto& physicsB = m_Registry.get<PhysicsComponent>(event.entityB);
+    auto &physicsA = m_Registry.get<PhysicsComponent>(event.entityA);
+    auto &physicsB = m_Registry.get<PhysicsComponent>(event.entityB);
     // Calculate the new velocities after collision
     glm::vec3 relativeVelocity = physicsB.velocity - physicsA.velocity;
     float velocityAlongNormal = glm::dot(relativeVelocity, event.collisionNormal);
@@ -62,10 +56,9 @@ void PhysicsSystem::onCollision(CollisionEvent& event)
     glm::vec3 impulse = j * event.collisionNormal;
     physicsA.velocity -= impulse / physicsA.mass;
     physicsB.velocity += impulse / physicsB.mass;
-
 }
 
-void PhysicsSystem::onWallCollision(WallCollisionEvent& event)
+void PhysicsSystem::onWallCollision(WallCollisionEvent &event)
 {
     float aspectRatio = RenderSystem::aspectRatio;
 
@@ -74,39 +67,36 @@ void PhysicsSystem::onWallCollision(WallCollisionEvent& event)
     float windowBottom = RenderSystem::windowBottom;
     float windowTop = RenderSystem::windowTop;
 
-   // auto [tc,pc,ccc]
+    // auto [tc,pc,ccc]
     //= m_Registry.get<TransformComponent,PhysicsComponent,CircleColliderComponent>(event.entity);
-    std::cout << "Has collidied" << (int)event.entity << "\n";
-    auto& tc = m_Registry.get<TransformComponent>(event.entity);
-    auto& pc = m_Registry.get<PhysicsComponent>(event.entity);
-    auto& ccc = m_Registry.get<CircleColliderComponent>(event.entity);
+    auto &tc = m_Registry.get<TransformComponent>(event.entity);
+    auto &pc = m_Registry.get<PhysicsComponent>(event.entity);
+    auto &ccc = m_Registry.get<CircleColliderComponent>(event.entity);
     switch (event.wall)
     {
-        case WALL::LEFT:
-            tc.position.x = windowLeft + ccc.radius;
-            pc.velocity.x *= -pc.restitution;
-            break;
-        case WALL::RIGHT:
-            tc.position.x = windowRight - ccc.radius;
-            pc.velocity.x *= -pc.restitution;
-            break;
-        case WALL::BOTTOM:
-            tc.position.y = windowBottom + ccc.radius;
-            pc.velocity.y *= -pc.restitution;
-            break;
-        case WALL::TOP:
-            tc.position.y = windowTop - ccc.radius;
-            pc.velocity.y *= -pc.restitution;
-            break;
-        default:
-            break;
+    case WALL::LEFT:
+        tc.position.x = windowLeft + ccc.radius;
+        pc.velocity.x *= -pc.restitution;
+        break;
+    case WALL::RIGHT:
+        tc.position.x = windowRight - ccc.radius;
+        pc.velocity.x *= -pc.restitution;
+        break;
+    case WALL::BOTTOM:
+        tc.position.y = windowBottom + ccc.radius;
+        pc.velocity.y *= -pc.restitution;
+        break;
+    case WALL::TOP:
+        tc.position.y = windowTop - ccc.radius;
+        pc.velocity.y *= -pc.restitution;
+        break;
+    default:
+        break;
     }
 }
 
-void PhysicsSystem::subscribe(entt::dispatcher& dispatcher)
+void PhysicsSystem::subscribe(entt::dispatcher &dispatcher)
 {
     dispatcher.sink<CollisionEvent>().connect<&PhysicsSystem::onCollision>(this);
     dispatcher.sink<WallCollisionEvent>().connect<&PhysicsSystem::onWallCollision>(this);
-
 }
-

@@ -3,11 +3,8 @@
 //
 
 #pragma once
-#include <utility>
-#include <vector>
 #include <glad/glad.h>
-
-
+#include <vector>
 
 struct MeshComponent
 {
@@ -15,7 +12,14 @@ struct MeshComponent
     std::vector<unsigned int> indices;
     unsigned int vao, vbo, ebo;
 
-    MeshComponent(const std::vector<float>& vertices,const std::vector<unsigned int>& indices)
-        : vertices(vertices), indices(indices) {}
-};
+    /*
+    @brief initializes Mesh component using vertices and indices.
+    @param vertices reference to vertices vector.
+    @param indices reference to indices vector.
 
+    */
+    MeshComponent(const std::vector<float> &vertices, const std::vector<unsigned int> &indices)
+        : vertices(vertices), indices(indices)
+    {
+    }
+};

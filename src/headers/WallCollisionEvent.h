@@ -5,16 +5,20 @@
 #pragma once
 #include <entt.hpp>
 
-enum class WALL {
+enum class WALL
+{
     LEFT,
     RIGHT,
     TOP,
     BOTTOM
 };
 
-struct WallCollisionEvent {
+struct WallCollisionEvent
+{
     entt::entity entity;
     WALL wall;
 
-	WallCollisionEvent(entt::entity entity, WALL wall) : entity(entity), wall(wall) {}
+    WallCollisionEvent(entt::entity entity, WALL wall) : entity(entity), wall(wall)
+    {
+    }
 };

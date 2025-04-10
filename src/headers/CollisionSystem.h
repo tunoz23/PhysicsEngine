@@ -8,21 +8,17 @@
 class CollisionSystem
 {
 
-public:
+  public:
+    CollisionSystem(entt::registry &registry, entt::dispatcher &dispatcher);
 
-	CollisionSystem(entt::registry& registry, entt::dispatcher& dispatcher);
+    bool checkCollision(const CircleColliderComponent &colliderA,
+                        const CircleColliderComponent &colliderB,
+                        const TransformComponent &transformA, const TransformComponent &transformB);
 
+    void CheckCollisions();
+    void CheckWallCollisions();
 
-	bool checkCollision(
-		const CircleColliderComponent& colliderA, const CircleColliderComponent& colliderB,
-		const TransformComponent& transformA,     const TransformComponent& transformB);
-
-	void CheckCollisions();
-	void CheckWallCollisions();
-
-
-private:
-	entt::registry& m_Registry;
-	entt::dispatcher& m_Dispatcher;
-
+  private:
+    entt::registry &m_Registry;
+    entt::dispatcher &m_Dispatcher;
 };

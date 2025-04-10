@@ -2,21 +2,21 @@
 
 #include <glad/glad.h>
 
-#include <string>
 #include <fstream>
-#include <sstream>
-#include <iostream>
 #include <glm/glm.hpp>
+#include <iostream>
+#include <sstream>
+#include <string>
 
-#include "glm/gtc/type_ptr.hpp"
+#include <glm/gtc/type_ptr.hpp>
 
 class Shader
 {
-public:
+  public:
     unsigned int ID;
     // constructor generates the shader on the fly
     // ------------------------------------------------------------------------
-    Shader(const char* vertexPath, const char* fragmentPath)
+    Shader(const char *vertexPath, const char *fragmentPath)
     {
         // 1. retrieve the vertex/fragment source code from filePath
         std::string vertexCode;
@@ -24,9 +24,9 @@ public:
         std::ifstream vShaderFile;
         std::ifstream fShaderFile;
         // ensure ifstream objects can throw exceptions:
-        vShaderFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
-        fShaderFile.exceptions (std::ifstream::failbit | std::ifstream::badbit);
-        try 
+        vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        try
         {
             // open files
             vShaderFile.open(vertexPath);
@@ -39,15 +39,15 @@ public:
             vShaderFile.close();
             fShaderFile.close();
             // convert stream into string
-            vertexCode   = vShaderStream.str();
+            vertexCode = vShaderStream.str();
             fragmentCode = fShaderStream.str();
         }
-        catch (std::ifstream::failure& e)
+        catch (std::ifstream::failure &e)
         {
             std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: " << e.what() << std::endl;
         }
-        const char* vShaderCode = vertexCode.c_str();
-        const char * fShaderCode = fragmentCode.c_str();
+        const char *vShaderCode = vertexCode.c_str();
+        const char *fShaderCode = fragmentCode.c_str();
         // 2. compile shaders
         unsigned int vertex, fragment;
         // vertex shader
@@ -73,40 +73,33 @@ public:
     // activate the shader
     // ------------------------------------------------------------------------
     void use() const
-    { 
-        glUseProgram(ID); 
+    {
+        glUseProgram(ID);
     }
     // utility uniform functions
     // ------------------------------------------------------------------------
     void setBool(const std::string &name, bool value) const
-    {         
-        glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value); 
+    {
+        glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
     }
     // ------------------------------------------------------------------------
     void setInt(const std::string &name, int value) const
-    { 
-        glUniform1i(glGetUniformLocation(ID, name.c_str()), value); 
+    {
+        glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
     }
     // ------------------------------------------------------------------------
     void setFloat(const std::string &name, float value) const
-    { 
-        glUniform1f(glGetUniformLocation(ID, name.c_str()), value); 
+    {
+        glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
     }
     // ------------------------------------------------------------------------
-    void setMat4(const std::string &name, const glm::mat4& value) const
+    void setMat4(const std::string &name, const glm::mat4 &value) const
     {
-        glUniformMatrix4fv
-        (
-            glGetUniformLocation(ID, name.c_str()),
-            1,
-            GL_FALSE,
-            glm::value_ptr(value)
-        );
-
-
+        glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE,
+                           glm::value_ptr(value));
     }
 
-private:
+  private:
     // utility function for checking shader compilation/linking errors.
     // ------------------------------------------------------------------------
     void checkCompileErrors(unsigned int shader, std::string type)
@@ -119,7 +112,10 @@ private:
             if (!success)
             {
                 glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-                std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+                std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n"
+                          << infoLog
+                          << "\n -- --------------------------------------------------- -- "
+                          << std::endl;
             }
         }
         else
@@ -128,7 +124,10 @@ private:
             if (!success)
             {
                 glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-                std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+                std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n"
+                          << infoLog
+                          << "\n -- --------------------------------------------------- -- "
+                          << std::endl;
             }
         }
     }

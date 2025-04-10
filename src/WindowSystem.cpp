@@ -5,26 +5,30 @@
 #include "WindowSystem.h"
 #include <iostream>
 
-WindowSystem::WindowSystem(int width, int height, const char* title)
+WindowSystem::WindowSystem(int width, int height, const char *title)
 {
-    if (!initGLFW() || !createWindow(width, height, title)) {
+    if (!initGLFW() || !createWindow(width, height, title))
+    {
         // Handle failure (throw exception or set a flag)
     }
-    else {
+    else
+    {
         std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
         std::cout << "GPU: " << glGetString(GL_RENDERER) << std::endl;
-
     }
 }
 
-WindowSystem::~WindowSystem() {
+WindowSystem::~WindowSystem()
+{
     glfwDestroyWindow(m_Window);
     glfwTerminate();
 }
 
-bool WindowSystem::initGLFW() {
+bool WindowSystem::initGLFW()
+{
     glfwSetErrorCallback(errorCallback);
-    if (!glfwInit()) {
+    if (!glfwInit())
+    {
         std::cerr << "Failed to initialize GLFW" << std::endl;
         return false;
     }
@@ -36,7 +40,7 @@ bool WindowSystem::initGLFW() {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #else
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 #endif
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
@@ -47,15 +51,18 @@ bool WindowSystem::initGLFW() {
 
     return true;
 }
-bool WindowSystem::createWindow(int width, int height, const char* title) {
+bool WindowSystem::createWindow(int width, int height, const char *title)
+{
     m_Window = glfwCreateWindow(width, height, title, nullptr, nullptr);
-    if (!m_Window) {
+    if (!m_Window)
+    {
         std::cerr << "Failed to create GLFW window" << std::endl;
         return false;
     }
     glfwMakeContextCurrent(m_Window);
 
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
         std::cerr << "Failed to load GLAD" << std::endl;
         return false;
     }
@@ -69,45 +76,50 @@ bool WindowSystem::createWindow(int width, int height, const char* title) {
     glfwSetFramebufferSizeCallback(m_Window, framebufferSizeCallback);
     glfwSetKeyCallback(m_Window, keyCallback);
     // Enable V-Sync
-    glfwSwapInterval(0);
+    glfwSwapInterval(1);
 
     return true;
 }
 
-
-bool WindowSystem::shouldClose() const {
+bool WindowSystem::shouldClose() const
+{
     return glfwWindowShouldClose(m_Window);
 }
 
-void WindowSystem::swapBuffers() const {
+void WindowSystem::swapBuffers() const
+{
     glfwSwapBuffers(m_Window);
 }
 
-void WindowSystem::pollEvents() {
+void WindowSystem::pollEvents()
+{
     glfwPollEvents();
 }
 
-GLFWwindow* WindowSystem::getWindow() const {
+GLFWwindow *WindowSystem::getWindow() const
+{
     return m_Window;
 }
 
 // Static callback functions
-void WindowSystem::errorCallback(int error, const char* description) {
+void WindowSystem::errorCallback(int error, const char *description)
+{
     std::cerr << "GLFW Error " << error << ": " << description << std::endl;
 }
 
-void WindowSystem::framebufferSizeCallback(GLFWwindow* window, int width, int height) {
+void WindowSystem::framebufferSizeCallback(GLFWwindow *window, int width, int height)
+{
     glViewport(0, 0, width, height);
-    aspectRatio = width / static_cast<float>(height);
-
-	
+    aspectRatio = static_cast<float>(width) / static_cast<float>(height);
+    std::cout <<aspectRatio << "\n";
 }
 
-void WindowSystem::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+void WindowSystem::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
 }
 
-float WindowSystem::aspectRatio = 16.f/9.f;
-// Ana programda
+float WindowSystem::aspectRatio = 16.f / 9.f;
