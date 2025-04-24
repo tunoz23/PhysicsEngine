@@ -10,8 +10,7 @@
 #include "TransformComponent.h"
 
 PhysicsSystem::PhysicsSystem(entt::registry &reg, entt::dispatcher &dispatcher)
-    : m_Registry(reg), m_Dispatcher(dispatcher)
-{
+    : m_Registry(reg), m_Dispatcher(dispatcher){
     // subscribe(m_Dispatcher);
 }
 

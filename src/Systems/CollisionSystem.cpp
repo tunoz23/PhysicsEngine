@@ -12,10 +12,8 @@ CollisionSystem::CollisionSystem(entt::registry &registry, entt::dispatcher &dis
 {
 }
 
-bool CollisionSystem::checkCollision(const CircleColliderComponent &colliderA,
-                                     const CircleColliderComponent &colliderB,
-                                     const TransformComponent &transformA,
-                                     const TransformComponent &transformB)
+bool CollisionSystem::checkCollision(const CircleColliderComponent &colliderA, const CircleColliderComponent &colliderB,
+                                     const TransformComponent &transformA, const TransformComponent &transformB)
 {
     // Calculate the distance between the centers of the two colliders
     float distance = glm::length(transformA.position - transformB.position);
@@ -39,10 +37,9 @@ void CollisionSystem::CheckCollisions()
             if (checkCollision(colliderA, colliderB, transformA, transformB))
             {
                 // Handle collision resolution here
-                glm::vec3 collisionNormal =
-                    glm::normalize(transformB.position - transformA.position);
-                float overlap = (colliderA.radius + colliderB.radius) -
-                                glm::length(transformA.position - transformB.position);
+                glm::vec3 collisionNormal = glm::normalize(transformB.position - transformA.position);
+                float overlap =
+                    (colliderA.radius + colliderB.radius) - glm::length(transformA.position - transformB.position);
 
                 m_Dispatcher.trigger<CollisionEvent>({entityA, entityB, overlap, collisionNormal});
                 ;

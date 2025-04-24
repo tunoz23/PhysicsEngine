@@ -16,7 +16,6 @@ void RenderSystem::render(const MeshComponent &meshComponent) const
 
     glBindVertexArray(meshComponent.vao);
     glDrawElements(GL_TRIANGLES, meshComponent.indices.size(), GL_UNSIGNED_INT, nullptr);
-
 }
 
 void RenderSystem::render() const

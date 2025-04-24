@@ -8,41 +8,40 @@
 #include "MeshComponent.h"
 #include "PhysicsComponent.h"
 #include "PhysicsSystem.h"
+#include "Rectangle.h"
 #include "TransformComponent.h"
 
 Scene::Scene(Shader shader)
-    : renderSystem(RenderSystem(shader, m_Registry)),
-      physicsSystem(PhysicsSystem(m_Registry, m_Dispatcher)),
+    : renderSystem(RenderSystem(shader, m_Registry)), physicsSystem(PhysicsSystem(m_Registry, m_Dispatcher)),
       collisionSystem(CollisionSystem(m_Registry, m_Dispatcher))
 {
     physicsSystem.subscribe(m_Dispatcher);
     entt::entity circleEntity = m_Registry.create();
     entt::entity circleEntity2 = m_Registry.create();
+    entt::entity rectangle1 = m_Registry.create();
+
+    m_Registry.emplace<MeshComponent>(rectangle1, generateRectangleVertices(-1.0f, 1.0f, 0.0f, 1.0f, -1.0f, 0.0f),
+                                      generateRectangleIndices());
+    m_Registry.emplace<TransformComponent>(rectangle1, TransformComponent{glm::vec3(-20.f, 0.0f, 0.f), glm::vec3(0, 0, 0), glm::vec3(1.f)});
 
     int N = 16;
-    m_Registry.emplace<MeshComponent>(circleEntity, generateCircleVertices(N),
-                                      generateCircleIndices(N));
-    m_Registry.emplace<MeshComponent>(circleEntity2, generateCircleVertices(N),
-                                      generateCircleIndices(N));
+    m_Registry.emplace<MeshComponent>(circleEntity, generateCircleVertices(N), generateCircleIndices(N));
+    m_Registry.emplace<MeshComponent>(circleEntity2, generateCircleVertices(N), generateCircleIndices(N));
 
     m_Registry.emplace<TransformComponent>(
-        circleEntity,
-        TransformComponent{glm::vec3(-20.f, 0.0f, 0.f), glm::vec3(0, 0, 0), glm::vec3(1.f)});
+        circleEntity, TransformComponent{glm::vec3(-20.f, 0.0f, 0.f), glm::vec3(0, 0, 0), glm::vec3(1.f)});
 
     m_Registry.emplace<PhysicsComponent>(
-        circleEntity,
-        PhysicsComponent{glm::vec3{10, 20, 0}, glm::vec3{0, 0, 0}, glm::vec3{0}, 0.9, 1});
+        circleEntity, PhysicsComponent{glm::vec3{10, 20, 0}, glm::vec3{0, 0, 0}, glm::vec3{0}, 0.9, 1});
     m_Registry.emplace<CircleColliderComponent>(circleEntity, 1.0f);
 
     //------------------------------------------------------------------//
 
     m_Registry.emplace<TransformComponent>(
-        circleEntity2,
-        TransformComponent{glm::vec3(20.f, 0.0f, 0.f), glm::vec3(0, 0, 0), glm::vec3(1.f)});
+        circleEntity2, TransformComponent{glm::vec3(20.f, 0.0f, 0.f), glm::vec3(0, 0, 0), glm::vec3(1.f)});
 
     m_Registry.emplace<PhysicsComponent>(
-        circleEntity2,
-        PhysicsComponent{glm::vec3{-9999999, 100, 0}, glm::vec3{0, 0, 0}, glm::vec3{0}, 0.9, 100});
+        circleEntity2, PhysicsComponent{glm::vec3{-9999999, 100, 0}, glm::vec3{0, 0, 0}, glm::vec3{0}, 0.9, 100});
     m_Registry.emplace<CircleColliderComponent>(circleEntity2, 1.0f);
 
     for (int i = 0; i < 10; i++)
@@ -51,16 +50,15 @@ Scene::Scene(Shader shader)
         m_Registry.emplace<MeshComponent>(ent, generateCircleVertices(N), generateCircleIndices(N));
 
         m_Registry.emplace<TransformComponent>(
-            ent,
-            TransformComponent{glm::vec3(i * 5, 0.0f, 0.f), glm::vec3(0, 0, 0), glm::vec3(1.f)});
+            ent, TransformComponent{glm::vec3(i * 5, 0.0f, 0.f), glm::vec3(0, 0, 0), glm::vec3(1.f)});
 
         m_Registry.emplace<PhysicsComponent>(
-            ent,
-            PhysicsComponent{glm::vec3{-99, 100, 0}, glm::vec3{0, 0, 0}, glm::vec3{0}, 0.9, 100});
+            ent, PhysicsComponent{glm::vec3{-99, 100, 0}, glm::vec3{0, 0, 0}, glm::vec3{0}, 0.9, 100});
         m_Registry.emplace<CircleColliderComponent>(ent, 1.0f);
     }
 
     // creates buffers etc.
+
     RenderSystem::initializeMesh(m_Registry);
 }
 
