@@ -3,8 +3,11 @@ bin/
 build/
 .vs/
 .idea/
+.cache/
 cmake-build-debug/
 CMakeSettings.json
+compile_commands.json
+.clang-format
 CMakeCache.txt
 .DS_Store
 .cache/

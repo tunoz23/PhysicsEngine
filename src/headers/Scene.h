@@ -3,22 +3,26 @@
 //
 
 #pragma once
-#include <entt.hpp>
-#include <Shader.h>
 #include <RenderSystem.h>
+#include <Shader.h>
+#include <entt.hpp>
 
+#include "CollisionSystem.h"
 #include "PhysicsSystem.h"
 
-
-class Scene {
-public:
-
-    RenderSystem renderSys;
+class Scene
+{
+  public:
+    RenderSystem renderSystem;
+    PhysicsSystem physicsSystem;
+    CollisionSystem collisionSystem;
 
     Scene(Shader shader);
     ~Scene() = default;
 
-    void main(float dt);
-private:
+    void main(double dt);
+
+  private:
     entt::registry m_Registry;
+    entt::dispatcher m_Dispatcher;
 };

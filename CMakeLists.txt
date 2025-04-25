@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 project(PhysicsEngine)
-
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -9,27 +9,53 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/glm-master)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/glfw-3.4)
 
-add_executable(${CMAKE_PROJECT_NAME} 
+add_executable(${CMAKE_PROJECT_NAME}
     src/main.cpp
     thirdparty/glad/glad.c
-        src/headers/Scene.h
-        src/Scene.cpp
-        src/headers/MeshComponent.h
-        src/headers/RenderSystem.h
-        src/RenderSystem.cpp
-        src/WindowSystem.cpp
-        src/headers/WindowSystem.h
-        src/headers/TransformComponent.h
-        src/PhysicsSystem.cpp
-        src/headers/PhysicsSystem.h
-        src/headers/PhysicsComponent.h
-        src/headers/utils.h
-        src/utils.cpp
-)
 
-target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC 
+        #<----------------headers---------------->#
+        src/headers/Systems/RenderSystem.h
+        src/headers/Systems/WindowSystem.h
+        src/headers/Systems/PhysicsSystem.h
+        src/headers/Systems/CollisionSystem.h
+
+        src/headers/Components/MeshComponent.h
+        src/headers/Components/PhysicsComponent.h
+        src/headers/Components/TransformComponent.h
+
+        src/headers/Circle.h
+        src/headers/Rectangle.h
+
+        src/headers/Components/ColliderComponents/CircleColliderComponent.h
+        src/headers/Components/ColliderComponents/OBBColliderComponent.h
+
+        src/headers/Events/CollisionEvent.h
+        src/headers/Events/WallCollisionEvent.h
+
+        src/headers/Scene.h
+
+        #<----------------cpps---------------->#
+        src/Scene.cpp
+
+        src/Systems/RenderSystem.cpp
+        src/Systems/WindowSystem.cpp
+        src/Systems/PhysicsSystem.cpp
+        src/Systems/CollisionSystem.cpp
+
+        src/Shapes/Circle.cpp
+        src/Shapes/Rectangle.cpp
+        )
+
+
+target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/headers
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/headers/Components
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/headers/Components/ColliderComponents
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/headers/Events
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/headers/Systems
+    #<----------------thirdparty---------------->#
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/glm-master
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/glad
     ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/entt
