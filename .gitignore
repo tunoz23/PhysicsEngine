@@ -7,3 +7,7 @@ cmake-build-debug/
 CMakeSettings.json
 CMakeCache.txt
 .DS_Store
+.cache/
+.clang-format
+compile_commands.json
+
