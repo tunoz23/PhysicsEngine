@@ -1,10 +1,8 @@
 //
 // Created by Tuna Öztürk on 29.03.2025.
 //
-
 #pragma once
 #include <entt.hpp>
-
 #include "MeshComponent.h"
 #include "Shader.h"
 
@@ -28,6 +26,7 @@ class RenderSystem
     static void initializeMesh(entt::registry &registry);
 
   private:
+
     Shader m_Shader;
     entt::registry &m_Registry;
 };

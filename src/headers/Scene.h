@@ -9,6 +9,7 @@
 
 #include "CollisionSystem.h"
 #include "PhysicsSystem.h"
+#include "CameraSystem.h"
 
 class Scene
 {
@@ -16,6 +17,7 @@ class Scene
     RenderSystem renderSystem;
     PhysicsSystem physicsSystem;
     CollisionSystem collisionSystem;
+    CameraSystem cameraSystem;
 
     Scene(Shader shader);
     ~Scene() = default;

@@ -5,7 +5,7 @@
 #include "RenderSystem.h"
 
 #include "TransformComponent.h"
-
+#include "ActiveCameraData.h"
 RenderSystem::RenderSystem(Shader shader, entt::registry &registry) : m_Shader(shader), m_Registry(registry)
 {
 }
@@ -17,31 +17,49 @@ void RenderSystem::render(const MeshComponent &meshComponent) const
     glBindVertexArray(meshComponent.vao);
     glDrawElements(GL_TRIANGLES, meshComponent.indices.size(), GL_UNSIGNED_INT, nullptr);
 }
-
 void RenderSystem::render() const
 {
     m_Shader.use();
 
-    // DEBUG PURPOSES
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glm::mat4 projection =
-        glm::ortho(windowLeft * aspectRatio, windowRight * aspectRatio, windowBottom, windowTop, -1.0f, 1.0f);
-    m_Shader.setMat4("projection", projection);
 
-    // Iterate over entities that have both TransformComponent and MeshComponent
+    // Load camera matrices from context
+    if (m_Registry.ctx().contains<ActiveCameraData>())
+    {
+        const auto &cam = m_Registry.ctx().get<ActiveCameraData>();
+
+        glm::mat4 view = glm::lookAt(glm::vec3(0,0,3.f), glm::vec3{0}, glm::vec3(0,1.f,0));        glm::mat4 projection;
+        projection = glm::perspective(glm::radians(45.f), 16.f/9.f, 0.1f, 100.f);
+        //glm::lookAt(const vec<3, T, Q> &eye, const vec<3, T, Q> &center, const vec<3, T, Q> &up)
+        m_Shader.setMat4("view", cam.view);
+        m_Shader.setMat4("projection", cam.projection);
+
+    }
+    else
+    {
+        std::cerr << "[RenderSystem] Warning: No CameraData found in context!" << std::endl;
+    }
+
+    // Optionally enable wireframe
+
     auto view = m_Registry.view<TransformComponent, MeshComponent>();
     for (const auto entity : view)
     {
         auto &transformComponent = view.get<TransformComponent>(entity);
         auto &meshComponent = view.get<MeshComponent>(entity);
 
-        // Set the model matrix for this entity
         m_Shader.setMat4("model", transformComponent.getMatrix());
 
-        // Bind the VAO and draw the mesh using its indices
         glBindVertexArray(meshComponent.vao);
         glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(meshComponent.indices.size()), GL_UNSIGNED_INT, nullptr);
+        GLenum err = glGetError();
+        if (err != GL_NO_ERROR) {
+            std::cerr << "[initializeMesh] GL error 0x"
+                      << std::hex << err << std::dec << std::endl;
+        }
     }
+
+
+
 }
 
 void RenderSystem::initializeMesh(entt::registry &registry)
@@ -72,6 +90,12 @@ void RenderSystem::initializeMesh(entt::registry &registry)
 
         // Unbind the VAO (the EBO remains bound as part of VAO state)
         glBindVertexArray(0);
+        GLenum err = glGetError();
+        if (err != GL_NO_ERROR) {
+            std::cerr << "[initializeMesh] GL error 0x"
+                      << std::hex << err << std::dec << std::endl;
+        }
+
     }
 }
 

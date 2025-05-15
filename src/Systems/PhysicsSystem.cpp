@@ -36,7 +36,7 @@ void PhysicsSystem::update(float dt)
 
 void PhysicsSystem::onCollision(CollisionEvent &event)
 {
-    // TO DO: IT DOESNT WORKKKKKKKKKK
+
 
     auto &physicsA = m_Registry.get<PhysicsComponent>(event.entityA);
     auto &physicsB = m_Registry.get<PhysicsComponent>(event.entityB);

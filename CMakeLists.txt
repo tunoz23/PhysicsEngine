@@ -18,13 +18,18 @@ add_executable(${CMAKE_PROJECT_NAME}
         src/headers/Systems/WindowSystem.h
         src/headers/Systems/PhysicsSystem.h
         src/headers/Systems/CollisionSystem.h
+        src/headers/Systems/CameraSystem.h
 
         src/headers/Components/MeshComponent.h
         src/headers/Components/PhysicsComponent.h
         src/headers/Components/TransformComponent.h
+        src/headers/Components/CameraComponent.h
 
         src/headers/Circle.h
         src/headers/Rectangle.h
+        src/headers/Cube.h
+
+        src/headers/ActiveCameraData.h
 
         src/headers/Components/ColliderComponents/CircleColliderComponent.h
         src/headers/Components/ColliderComponents/OBBColliderComponent.h
@@ -34,6 +39,7 @@ add_executable(${CMAKE_PROJECT_NAME}
 
         src/headers/Scene.h
 
+
         #<----------------cpps---------------->#
         src/Scene.cpp
 
@@ -41,9 +47,11 @@ add_executable(${CMAKE_PROJECT_NAME}
         src/Systems/WindowSystem.cpp
         src/Systems/PhysicsSystem.cpp
         src/Systems/CollisionSystem.cpp
+        src/Systems/CameraSystem.cpp
 
         src/Shapes/Circle.cpp
         src/Shapes/Rectangle.cpp
+        src/Shapes/Cube.cpp
         )
 
 

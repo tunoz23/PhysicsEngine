@@ -15,7 +15,7 @@ int main()
     double lastFrameTime = glfwGetTime();
     double currentFrameTime = 0.0f;
     double dt = 0.0f;
-
+    glEnable(GL_DEPTH_TEST);
     while (!windowSystem.shouldClose())
     {
 
@@ -27,6 +27,7 @@ int main()
 
         glClearColor(color, color, color, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 
         scene.main(dt);
 
