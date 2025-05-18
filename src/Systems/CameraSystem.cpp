@@ -33,5 +33,5 @@ void CameraSystem::update(entt::registry &registry)
     glm::mat4 projMat = glm::perspective(glm::radians(camComp.fov), ratio, camComp.near, camComp.far);
 
 
-    registry.ctx().insert_or_assign<ActiveCameraData>(ActiveCameraData{.projection = projMat, .view = viewMat});
+    registry.ctx().insert_or_assign<ActiveCameraData>(ActiveCameraData{ .view = viewMat, .projection = projMat });
 }

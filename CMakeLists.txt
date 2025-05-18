@@ -28,6 +28,8 @@ add_executable(${CMAKE_PROJECT_NAME}
         src/headers/Circle.h
         src/headers/Rectangle.h
         src/headers/Cube.h
+        src/headers/Sphere.h
+
 
         src/headers/ActiveCameraData.h
 
@@ -52,7 +54,7 @@ add_executable(${CMAKE_PROJECT_NAME}
         src/Shapes/Circle.cpp
         src/Shapes/Rectangle.cpp
         src/Shapes/Cube.cpp
-        )
+        src/Shapes/Sphere.cpp)
 
 
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC

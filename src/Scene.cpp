@@ -12,6 +12,7 @@
 #include "Rectangle.h"
 #include "TransformComponent.h"
 #include "Cube.h"
+#include "Sphere.h"
 #include "ActiveCameraData.h"
 
 Scene::Scene(Shader p_Shader)
@@ -36,27 +37,29 @@ Scene::Scene(Shader p_Shader)
     m_Registry.emplace<CameraComponent>(
         cameraEntity,
         CameraComponent{
+        	.fov = 45.0f,
             .aspectRatio = 16.0f/9.0f,
             .near        = 0.1f,
-            .far         = 100.0f,
-            .fov         = 45.0f
+            .far         = 100.0f
         }
     );
 
     // Debug quad at Z = -5
+
+
     entt::entity debugQuad = m_Registry.create();
     m_Registry.emplace<MeshComponent>(
         debugQuad,
 
-        generateCubeVertices(),
-        generateCubeIndices()
+        generateUVSphereVertices(1, 30, 60),
+        generateUVSphereIndices(30, 60)
     );
     m_Registry.emplace<TransformComponent>(
         debugQuad,
         TransformComponent{
             /*position*/ {0.0f, 0.0f, -5.0f},  // 5 units in front of camera
             /*rotation*/ {0.0f, 0.0f,  0.0f},
-            /*scale*/    {3.0f, 3.0f, 3.0f}    // big enough to fill the view
+            /*scale*/    {1.0f, 1.0f, 1.0f}    // big enough to fill the view
         }
     );
     m_Registry.emplace<PhysicsComponent>(debugQuad,
