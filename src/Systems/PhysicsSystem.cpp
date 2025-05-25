@@ -1,16 +1,21 @@
 //
 // Created by Tuna Öztürk on 30.03.2025.
 //
-
+#ifndef GLM_ENABLE_EXPERIMENTAL
+#define GLM_ENABLE_EXPERIMENTAL
+#endif
 #include "PhysicsSystem.h"
-
+#include <glm/gtx/string_cast.hpp>
 #include "CircleColliderComponent.h"
+#include "OBBColliderComponent.h"
+#include "OBBCollisionEvent.h"
 #include "PhysicsComponent.h"
 #include "RenderSystem.h"
 #include "TransformComponent.h"
 
 PhysicsSystem::PhysicsSystem(entt::registry &reg, entt::dispatcher &dispatcher)
-    : m_Registry(reg), m_Dispatcher(dispatcher){
+    : m_Registry(reg), m_Dispatcher(dispatcher)
+{
     // subscribe(m_Dispatcher);
 }
 
@@ -20,82 +25,127 @@ void PhysicsSystem::update(float dt)
 
     for (auto entity : view)
     {
-        auto &physicsComponent = view.get<PhysicsComponent>(entity);
-        auto &transformComponent = view.get<TransformComponent>(entity);
+        auto &pc = view.get<PhysicsComponent>(entity);
+        auto &tc = view.get<TransformComponent>(entity);
 
-        if (physicsComponent.mass != 0.0f)
-            physicsComponent.velocity +=
-                (physicsComponent.acceleration + PhysicsSystem::GravityAcceleration) * dt;
+        if (pc.isStatic)
+            continue;
 
-        else
-            physicsComponent.velocity += physicsComponent.acceleration * dt;
+        // Apply linear motion
+        glm::vec3 accel = (pc.mass != 0.0f) ? (pc.acceleration + GravityAcceleration) : pc.acceleration;
+        pc.velocity += accel * dt;
+        tc.position += pc.velocity * dt;
 
-        transformComponent.position += physicsComponent.velocity * dt;
+        // Apply angular motion
+        //pc.angularVelocity += pc.inverseInertiaTensor * pc.torque * dt;
+        // Assume you apply angular velocity to transform orientation here
+        // (e.g., tc.rotation = glm::quat(...) or tc.rotation += ...)
+        // Convert angular velocity (rad/s) to degrees and integrate over time
+        tc.rotation += glm::degrees(pc.angularVelocity * dt);
+        //std::cout << (int)entity << << "\n";
+        // Reset torque for next frame
+        //pc.torque = glm::vec3(0.0f);
     }
 }
 
 void PhysicsSystem::onCollision(CollisionEvent &event)
 {
+    auto &physA = m_Registry.get<PhysicsComponent>(event.entityA);
+    auto &physB = m_Registry.get<PhysicsComponent>(event.entityB);
 
-
-    auto &physicsA = m_Registry.get<PhysicsComponent>(event.entityA);
-    auto &physicsB = m_Registry.get<PhysicsComponent>(event.entityB);
-    // Calculate the new velocities after collision
-    glm::vec3 relativeVelocity = physicsB.velocity - physicsA.velocity;
-    float velocityAlongNormal = glm::dot(relativeVelocity, event.collisionNormal);
-    // Do not resolve if velocities are separating
-    if (velocityAlongNormal > 0)
+    // If both are static, nothing to do
+    if (physA.isStatic && physB.isStatic)
         return;
-    // Calculate restitution
-    float e = std::min(physicsA.restitution, physicsB.restitution);
-    // Calculate impulse scalar
-    float j = -(1 + e) * velocityAlongNormal;
-    j /= (1 / physicsA.mass + 1 / physicsB.mass);
-    // Apply impulse
+
+    // Compute relative velocity along collision normal
+    glm::vec3 relVel = physB.velocity - physA.velocity;
+    float velAlongNormal = glm::dot(relVel, event.collisionNormal);
+
+    // Already separating?
+    if (velAlongNormal > 0)
+        return;
+
+    // Compute impulse scalar
+    float e = std::min(physA.restitution, physB.restitution);
+    float j = -(1 + e) * velAlongNormal;
+
+    // Denominator: for a static body, treat 1/mass = 0
+    float invMassA = physA.isStatic ? 0.0f : 1.0f / physA.mass;
+    float invMassB = physB.isStatic ? 0.0f : 1.0f / physB.mass;
+    j /= (invMassA + invMassB);
+
     glm::vec3 impulse = j * event.collisionNormal;
-    physicsA.velocity -= impulse / physicsA.mass;
-    physicsB.velocity += impulse / physicsB.mass;
+
+    // Apply impulse only to non–static bodies
+    if (!physA.isStatic)
+        physA.velocity -= impulse * invMassA;
+    if (!physB.isStatic)
+        physB.velocity += impulse * invMassB;
 }
 
-void PhysicsSystem::onWallCollision(WallCollisionEvent &event)
+void PhysicsSystem::OnOBBCollision(const OBBCollisionEvent &event)
 {
-    float aspectRatio = RenderSystem::aspectRatio;
+    auto &pcA = m_Registry.get<PhysicsComponent>(event.a);
+    auto &pcB = m_Registry.get<PhysicsComponent>(event.b);
+    if (pcA.isStatic && pcB.isStatic)
+        return;
 
-    float windowLeft = RenderSystem::windowLeft * aspectRatio;
-    float windowRight = RenderSystem::windowRight * aspectRatio;
-    float windowBottom = RenderSystem::windowBottom;
-    float windowTop = RenderSystem::windowTop;
+    auto &obbA = m_Registry.get<OBBColliderComponent>(event.a);
+    auto &obbB = m_Registry.get<OBBColliderComponent>(event.b);
 
-    // auto [tc,pc,ccc]
-    //= m_Registry.get<TransformComponent,PhysicsComponent,CircleColliderComponent>(event.entity);
-    auto &tc = m_Registry.get<TransformComponent>(event.entity);
-    auto &pc = m_Registry.get<PhysicsComponent>(event.entity);
-    auto &ccc = m_Registry.get<CircleColliderComponent>(event.entity);
-    switch (event.wall)
-    {
-    case WALL::LEFT:
-        tc.position.x = windowLeft + ccc.radius;
-        pc.velocity.x *= -pc.restitution;
-        break;
-    case WALL::RIGHT:
-        tc.position.x = windowRight - ccc.radius;
-        pc.velocity.x *= -pc.restitution;
-        break;
-    case WALL::BOTTOM:
-        tc.position.y = windowBottom + ccc.radius;
-        pc.velocity.y *= -pc.restitution;
-        break;
-    case WALL::TOP:
-        tc.position.y = windowTop - ccc.radius;
-        pc.velocity.y *= -pc.restitution;
-        break;
-    default:
-        break;
-    }
+    // Use proper collision normal from SAT (replace this with event.collisionNormal if available)
+    glm::vec3 normal = glm::normalize(obbB.center - obbA.center);
+
+    // Approximate contact point as midpoint
+    glm::vec3 contactPoint = (obbA.center + obbB.center) * 0.5f;
+
+    // Lever arms
+    glm::vec3 rA = contactPoint - obbA.center;
+    glm::vec3 rB = contactPoint - obbB.center;
+
+    // Relative velocity at contact point
+    glm::vec3 vA = pcA.velocity + glm::cross(pcA.angularVelocity, rA);
+    glm::vec3 vB = pcB.velocity + glm::cross(pcB.angularVelocity, rB);
+    glm::vec3 relVel = vB - vA;
+
+    float velAlongNormal = glm::dot(relVel, normal);
+    if (velAlongNormal > 0.0f)
+        return; // separating
+
+    float e = std::min(pcA.restitution, pcB.restitution);
+    float invMassA = pcA.isStatic ? 0.0f : 1.0f / pcA.mass;
+    float invMassB = pcB.isStatic ? 0.0f : 1.0f / pcB.mass;
+
+    // Calculate rotational inertia terms
+    glm::vec3 raCrossN = glm::cross(rA, normal);
+    glm::vec3 rbCrossN = glm::cross(rB, normal);
+    float angularTermA = pcA.isStatic ? 0.0f : glm::dot(normal, glm::cross(pcA.inverseInertiaTensor * raCrossN, rA));
+    float angularTermB = pcB.isStatic ? 0.0f : glm::dot(normal, glm::cross(pcB.inverseInertiaTensor * rbCrossN, rB));
+
+    float denom = invMassA + invMassB + angularTermA + angularTermB;
+    if (denom == 0.0f)
+        return;
+
+    float j = -(1.0f + e) * velAlongNormal / denom;
+    glm::vec3 impulse = j * normal;
+
+    // Apply linear impulse
+    if (!pcA.isStatic) pcA.velocity -= impulse * invMassA;
+    if (!pcB.isStatic) pcB.velocity += impulse * invMassB;
+
+    // Apply angular impulse
+    if (!pcA.isStatic)
+        pcA.angularVelocity -= pcA.inverseInertiaTensor * glm::cross(rA, impulse);
+    if (!pcB.isStatic)
+        pcB.angularVelocity += pcB.inverseInertiaTensor * glm::cross(rB, impulse);
+       std::cout <<  glm::to_string( pcA.angularVelocity) << "\n";
+       std::cout <<  glm::to_string( pcB.angularVelocity) << "\n";
+    //std::cout << "Resolved OBB collision between " << int(event.a) << " and " << int(event.b) << std::endl;
 }
+
 
 void PhysicsSystem::subscribe(entt::dispatcher &dispatcher)
 {
     dispatcher.sink<CollisionEvent>().connect<&PhysicsSystem::onCollision>(this);
-    dispatcher.sink<WallCollisionEvent>().connect<&PhysicsSystem::onWallCollision>(this);
+    dispatcher.sink<OBBCollisionEvent>().connect<&PhysicsSystem::OnOBBCollision>(this);
 }

@@ -21,6 +21,8 @@ void RenderSystem::render() const
 {
     m_Shader.use();
 
+    //Debug Purproses
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     // Load camera matrices from context
     if (m_Registry.ctx().contains<ActiveCameraData>())
@@ -79,7 +81,10 @@ void RenderSystem::initializeMesh(entt::registry &registry)
         glBufferData(GL_ARRAY_BUFFER, mesh.vertices.size() * sizeof(float), mesh.vertices.data(), GL_STATIC_DRAW);
 
         // Set up vertex attribute pointer for positions (3 floats per vertex)
+        // Position Vertex
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+
+
         glEnableVertexAttribArray(0);
 
         // Generate and bind EBO, then fill with index data

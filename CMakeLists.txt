@@ -38,9 +38,11 @@ add_executable(${CMAKE_PROJECT_NAME}
 
         src/headers/Events/CollisionEvent.h
         src/headers/Events/WallCollisionEvent.h
+        src/headers/Events/OBBCollisionEvent.h
 
         src/headers/Scene.h
 
+        src/headers/Vertex.h
 
         #<----------------cpps---------------->#
         src/Scene.cpp

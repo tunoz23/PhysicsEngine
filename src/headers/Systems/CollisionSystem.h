@@ -5,6 +5,8 @@
 #include "CircleColliderComponent.h"
 #include "TransformComponent.h"
 
+struct OBBColliderComponent;
+
 class CollisionSystem
 {
 
@@ -17,7 +19,10 @@ class CollisionSystem
 
     void CheckCollisions();
     void CheckWallCollisions();
-
+    void CheckOBBCollisions();
+    void SyncOBBCollider();
+private:
+    bool TestOBBCollision(const OBBColliderComponent& A, const OBBColliderComponent& B);
   private:
     entt::registry &m_Registry;
     entt::dispatcher &m_Dispatcher;

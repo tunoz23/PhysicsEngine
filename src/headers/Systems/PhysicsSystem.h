@@ -9,6 +9,8 @@
 #include "CollisionEvent.h"
 #include "WallCollisionEvent.h"
 
+struct OBBCollisionEvent;
+
 class PhysicsSystem
 {
 
@@ -19,9 +21,9 @@ class PhysicsSystem
 
     void update(float dt);
     void onCollision(CollisionEvent &event);
-    void onWallCollision(WallCollisionEvent &event);
-    void subscribe(entt::dispatcher &dispatcher);
 
+    void subscribe(entt::dispatcher &dispatcher);
+    void OnOBBCollision(const OBBCollisionEvent& event);
   private:
     entt::registry &m_Registry;
     entt::dispatcher &m_Dispatcher;
